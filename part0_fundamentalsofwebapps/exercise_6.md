@@ -22,7 +22,7 @@ sequenceDiagram
     end
 ```
 
-# Diagram that depicts the full scenario from the moment the browser sends the first request to the server until form is used in the browser side and data is send to the server.
+## Diagram that depicts the full scenario from the moment the browser sends the first request to the server until form is used in the browser side and data is send to the server.
 
 ```mermaid
 sequenceDiagram
