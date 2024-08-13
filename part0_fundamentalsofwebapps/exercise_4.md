@@ -2,29 +2,37 @@
 
 ```mermaid
 sequenceDiagram
-    participant Browser
-    participant Server
+    participant browser
+    participant server
 
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
+    activate server
+    server-->>browser: URL redirect
+    deactivate server
 
+    Note right of browser: The browser receives the URL redirect from the server and sends a GET request
 
-    Browser->>Server: POST /exampleapp/new_note
-    Server->>Server: Handle POST request
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
+    activate server
+    server-->>browser: HTML document
+    deactivate server
 
-    alt Handle POST request
-        Server->>Server: Retrieve note from request body
-        Server->>Server: Add note to 'notes' array
-        Server->>Server: Create new Date object
-        Server->>Server: Update note with current date
-        Server->>Server: Redirect to /notes
-    end
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+    activate server
+    server-->>browser: the css file
+    deactivate server
 
-    Server-->>Browser: 302 Found
-    Browser->>Server: GET /notes.html
-    Server-->>Browser: notes.html
-    Browser->>Server: GET /main.css
-    Server-->>Browser: main.css
-    Browser->>Server: GET /main.js
-    Server-->>Browser: main.js
-    Browser->>Server: GET /data.json
-    Server-->>Browser: data.json
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+    activate server
+    server-->>browser: the JavaScript file
+    deactivate server
+
+    Note right of browser: The browser starts executing the JavaScript code that fetches the JSON from the server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+    activate server
+    server-->>browser: [{ "content": "HTML is very easy", "date": "2024-8-12" }, ... ]
+    deactivate server
+
+    Note right of browser: The browser executes the callback function that renders the notes
 ```
