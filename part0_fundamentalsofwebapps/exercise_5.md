@@ -4,17 +4,30 @@ The diagram depicts only what takes place when the browser request the server to
 
 ```mermaid
 sequenceDiagram
-    participant Browser
-    participant Server
+    participant browser
+    participant server
 
-    Browser->>Server: GET /exampleapp/spa.html
-    Server-->>Browser: spa.html
-    Browser->>Server: GET /exampleapp/main.css
-    Server-->>Browser: main.css
-    Browser->>Server: GET /exampleapp/spa.js
-    Server-->>Browser: spa.js
-    Browser->>Server: GET /exampleapp/data.json
-    Server-->>Browser: data.json
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa
+    activate server
+    server-->>browser: HTML document
+    deactivate server
 
-    Browser->>Browser: Render HTML and CSS
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+    activate server
+    server-->>browser: the css file
+    deactivate server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+    activate server
+    server-->>browser: the JavaScript file
+    deactivate server
+
+    Note right of browser: The browser starts executing the JavaScript code that fetches the JSON from the server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+    activate server
+    server-->>browser: [{ "content": "HTML is easy", "date": "2023-1-1" }, ... ]
+    deactivate server
+
+    Note right of browser: The browser executes the callback function that renders the notes
 ```
