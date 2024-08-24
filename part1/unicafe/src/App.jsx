@@ -1,5 +1,36 @@
 import { useState } from 'react'
 
+const StatisticLine = ({text,value}) => {
+  return (
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
+  )
+}
+
+const Statistics = ({stat}) => {
+  if (stat[3].value === 0) {
+    return (
+      <>
+        <p>No feedback given</p>
+      </>
+    )
+  }
+  return (
+    <table>
+      <tbody>
+        <StatisticLine text={stat[0].name} value={stat[0].value} />
+        <StatisticLine text={stat[1].name} value={stat[1].value} />
+        <StatisticLine text={stat[2].name} value={stat[2].value} />
+        <StatisticLine text={stat[3].name} value={stat[3].value} />
+        <StatisticLine text={stat[4].name} value={stat[4].value} />
+        <StatisticLine text={stat[5].name} value={stat[5].value + " %"} />
+      </tbody>
+    </table>
+  )
+}
+
 const Button = ({smash,text}) => (
   <button onClick={smash}>{text}</button>
 )
@@ -11,6 +42,19 @@ const App = () => {
       good: 0, neutral: 0, bad: 0, all: 0, avg: 0, pos: 0
     }
   )
+
+  const cafe = {
+    title_one: "give feedback",
+    title_two: "statistcs",
+    statistics: [
+      { name: "good", value: clicks.good },
+      { name: "neutral", value: clicks.neutral },
+      { name: "bad", value: clicks.bad },
+      { name: "all", value: clicks.all },
+      { name: "average", value: clicks.avg },
+      { name: "positive", value: clicks.pos }
+    ]
+  }
 
   const goodClick = () => {
     const goodc = clicks.good + 1
@@ -41,17 +85,12 @@ const App = () => {
 
   return (
     <div>
-      <h1>give feedback</h1>
+      <h1>{cafe.title_one}</h1>
       <Button smash={goodClick} text="good" />
       <Button smash={neutralClick} text="neutral" />
       <Button smash={badClick} text="bad" />
-      <h1>statistics</h1>
-      <p>good {clicks.good}</p>
-      <p>neutral {clicks.neutral}</p>
-      <p>bad {clicks.bad}</p>
-      <p>all {clicks.all}</p>
-      <p>average {clicks.avg}</p>
-      <p>positive {clicks.pos} %</p>
+      <h1>{cafe.title_two}</h1>
+      <Statistics stat={cafe.statistics} />
     </div>
   )
 }
