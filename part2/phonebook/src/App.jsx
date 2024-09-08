@@ -24,7 +24,7 @@ const App = () => {
     const nameObject = {
       name: newName,
       number: newNumber,
-      id: String(persons.length + 1)
+      id: String(Number(persons[persons.length - 1].id)+1)
     }
     const names = persons.map(x => x.name)
     if (names.find(x => x === newName) !== undefined) {
@@ -40,6 +40,23 @@ const App = () => {
     } 
   }
 
+  const ask = (Id) => {
+    console.log("id:",Id)
+    const nameToRemove = persons.filter(x => x.id === Id)[0].name
+    console.log("nameToRemove:",nameToRemove)
+    if (confirm(`Delete ${nameToRemove} ?`)) {
+      console.log(`Confirmed we can delete ${nameToRemove}!`)
+      namePersons
+        .remove(Id)
+        .then(reply => {
+          console.log("reply:",reply)
+          setPersons(persons.filter(x => x.id !== reply.id))
+        })
+    } else {
+      console.log(`We CANNOT delete ${nameToRemove}!!!`)
+    }
+  }
+  
   const handleNameAdd = (event) => {
     setNewName(event.target.value)
   }
@@ -65,7 +82,7 @@ const App = () => {
         number={newNumber} handlenumber={handleNumberAdd}
         add={addName} />
       <h2>Numbers</h2>
-      <Persons names={numbersToShow} />
+      <Persons names={numbersToShow} onSmash={ask} />
     </div>
   )
 }
