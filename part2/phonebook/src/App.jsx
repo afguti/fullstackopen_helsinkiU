@@ -28,7 +28,20 @@ const App = () => {
     }
     const names = persons.map(x => x.name)
     if (names.find(x => x === newName) !== undefined) {
-      alert(newName + " is already added to phonebook")
+      if (confirm(newName + " is already added to phonebook, replace the old number witha new one?")) {
+        console.log("change element with id:",persons.filter(x => x.name === newName)[0].id)
+        nameObject.id = String(persons.filter(x => x.name === newName)[0].id)
+        namePersons
+          .update(nameObject.id,nameObject)
+          .then(response => {
+            console.log("The response from PUT:",response)
+            console.log("I want to update:",persons.filter(x => x.id === response.id)[0].number)
+            persons.filter(x => x.id === response.id)[0].number = response.number
+            setPersons(persons)
+            setNewName('')
+            setNewNumber('')
+          })
+      }
     } else {
       namePersons
         .create(nameObject)
