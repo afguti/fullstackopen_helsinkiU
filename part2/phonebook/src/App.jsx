@@ -4,11 +4,32 @@ import Filter from './components/Filter'
 import Persons from './components/Persons'
 import namePersons from './services/persons'
 
+const Notification = ({ message }) => {
+  const successStyle = {
+    color: 'green',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+  if (message === null) {
+    return null
+  }
+  return (
+    <div style={successStyle}>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setfilterName] = useState('')
+  const [successMsg, setSuccessMsg] = useState(null)
 
   useEffect(() => {
     console.log('effect')
@@ -50,7 +71,13 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
-    } 
+    }
+    setSuccessMsg(
+      `Added ${nameObject.name}`
+    )
+    setTimeout(() => {
+      setSuccessMsg(null)
+    }, 5000)
   }
 
   const ask = (Id) => {
@@ -89,6 +116,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMsg} />
       <Filter value={filterName} onChange={handleFilter} />
       <h2>Add a new</h2>
       <PersonForm name={newName} handlename={handleNameAdd}
