@@ -3,26 +3,8 @@ import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
 import namePersons from './services/persons'
-
-const Notification = ({ message }) => {
-  const successStyle = {
-    color: 'green',
-    background: 'lightgrey',
-    fontSize: 20,
-    borderStyle: 'solid',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10
-  }
-  if (message === null) {
-    return null
-  }
-  return (
-    <div style={successStyle}>
-      {message}
-    </div>
-  )
-}
+import Notification from './components/Notification'
+import ErrorMsg from './components/ErrorMsg'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -30,6 +12,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setfilterName] = useState('')
   const [successMsg, setSuccessMsg] = useState(null)
+  const [errorMsg, setErrorMsg] = useState(null)
 
   useEffect(() => {
     console.log('effect')
@@ -39,6 +22,15 @@ const App = () => {
         setPersons(initialNames)
       })
   },[])
+
+  const successMessage = (message) => {
+    setSuccessMsg(
+      `Added ${message}`
+    )
+    setTimeout(() => {
+      setSuccessMsg(null)
+    }, 5000)
+  }
 
   const addName = (event) => {
     event.preventDefault()
@@ -61,6 +53,16 @@ const App = () => {
             setPersons(persons)
             setNewName('')
             setNewNumber('')
+            successMessage(nameObject.name)
+          })
+          .catch(error => {
+            console.log(`Information of ${newName} has already been removed from server`)
+            setErrorMsg(
+              `Information of ${newName} has already been removed from server`
+            )
+            setTimeout(() => {
+              setErrorMsg(null)
+            }, 5000)
           })
       }
     } else {
@@ -71,13 +73,8 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
-    }
-    setSuccessMsg(
-      `Added ${nameObject.name}`
-    )
-    setTimeout(() => {
-      setSuccessMsg(null)
-    }, 5000)
+      successMessage(nameObject.name)
+    }   
   }
 
   const ask = (Id) => {
@@ -117,6 +114,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Notification message={successMsg} />
+      <ErrorMsg message={errorMsg} />
       <Filter value={filterName} onChange={handleFilter} />
       <h2>Add a new</h2>
       <PersonForm name={newName} handlename={handleNameAdd}
