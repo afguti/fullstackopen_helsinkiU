@@ -1,26 +1,36 @@
 import { useEffect, useState } from "react"
 
-const Countries = ({message}) => {
+const ShowCountry = ({message}) => {
+  console.log("Sent to ShowCountry:",message)
+  return (
+    <>
+      <h1>{message.name.common}</h1>
+      <p>capital {message.capital}</p>
+      <p>area {message.area}</p>
+      <h3>languages:</h3>
+      <ul>
+        {Object.values(message.languages).map(x => <li key={x}>{x}</li>)}
+      </ul>
+      <p>
+        <img src={message.flags.png} width="220" height="150" />
+      </p>   
+    </>
+  )
+}
+
+const Countries = ({message, onSmash}) => {
   if (message.length > 10) {
     return ( <>Too many matches, specify another filter</> )
   } else if (message.length === 1) {
     console.log("languages:",Object.values(message[0].languages))
     return (
-      <>
-        <h1>{message.map(x => x.name.common)}</h1>
-        <p>capital {message.map(x => x.capital)}</p>
-        <p>area {message.map(x => x.area)}</p>
-        <h3>languages:</h3>
-        <lu>
-          {Object.values(message[0].languages).map(x => <li>{x}</li>)}
-        </lu>
-        <p>
-          <img src={message.map(x => x.flags.png)} width="220" height="150" />
-        </p>       
-      </>
+      <ShowCountry message={message[0]} />
     )
   } else {
-    return ( <>{message.map(x => <p key={x.name.common}>{x.name.common}</p>)}</> )
+    return ( <>{message.map(x => <p key={x.name.common}>
+      {x.name.common}
+      <button onClick={() => onSmash(x)}>show</button>
+      </p>)}</> )
   }
 }
 
@@ -34,13 +44,18 @@ const App = () => {
       .then(result => setCountriesList(result))
   }, [])
 
+  const country = (name) => {
+    console.log("sent to country function:",name)
+    setFilterName(name.name.common)
+  }
+
   const handleFilter = (event) => {
     setFilterName(event.target.value)
   }
 
   console.log("filterName:",filterName)
   console.log("CountriesList len:",countriesList.length)
-  console.log("CountriesList Names:",countriesList.map(x => x.name.common))
+  //console.log("CountriesList Names:",countriesList.map(x => x.name.common))
 
   const countryToShow = (filterName === "")
     ? countriesList
@@ -52,7 +67,7 @@ const App = () => {
     <div>
       find countries <input value={filterName} onChange={handleFilter} />
       <div>
-        <Countries message={countryToShow} />
+        <Countries message={countryToShow} onSmash={country}/>
       </div>
     </div>
   )
