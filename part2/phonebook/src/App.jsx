@@ -15,7 +15,6 @@ const App = () => {
   const [errorMsg, setErrorMsg] = useState(null)
 
   useEffect(() => {
-    console.log('effect')
     namePersons
       .getAll()
       .then(initialNames => {
@@ -42,13 +41,10 @@ const App = () => {
     const names = persons.map(x => x.name)
     if (names.find(x => x === newName) !== undefined) {
       if (confirm(newName + " is already added to phonebook, replace the old number witha new one?")) {
-        console.log("change element with id:",persons.filter(x => x.name === newName)[0].id)
         nameObject.id = String(persons.filter(x => x.name === newName)[0].id)
         namePersons
           .update(nameObject.id,nameObject)
           .then(response => {
-            console.log("The response from PUT:",response)
-            console.log("I want to update:",persons.filter(x => x.id === response.id)[0].number)
             persons.filter(x => x.id === response.id)[0].number = response.number
             setPersons(persons)
             setNewName('')
@@ -56,7 +52,6 @@ const App = () => {
             successMessage(nameObject.name)
           })
           .catch(error => {
-            console.log(`Information of ${newName} has already been removed from server`)
             setErrorMsg(
               `Information of ${newName} has already been removed from server`
             )
@@ -78,19 +73,14 @@ const App = () => {
   }
 
   const ask = (Id) => {
-    console.log("id:",Id)
     const nameToRemove = persons.filter(x => x.id === Id)[0].name
-    console.log("nameToRemove:",nameToRemove)
     if (confirm(`Delete ${nameToRemove} ?`)) {
-      console.log(`Confirmed we can delete ${nameToRemove}!`)
       namePersons
         .remove(Id)
         .then(reply => {
-          console.log("reply:",reply)
           setPersons(persons.filter(x => x.id !== reply.id))
         })
     } else {
-      console.log(`We CANNOT delete ${nameToRemove}!!!`)
     }
   }
   
