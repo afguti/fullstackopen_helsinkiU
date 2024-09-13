@@ -2,6 +2,26 @@ import { useEffect, useState } from "react"
 
 const ShowCountry = ({message}) => {
   console.log("Sent to ShowCountry:",message)
+  const capital = message.capital[0]
+  const country_code = message.cca2.toLowerCase()
+  const api_key = import.meta.env.VITE_SOME_KEY
+  const [ weatherInfo, setWeatherInfo ] = useState([])
+  var tempInfo = 0
+  var temp_icon = ""
+  var temp_wind = ""
+  useEffect(() => {
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${capital},${country_code}&APPID=${api_key}`)
+      .then(response => response.json())
+      .then(result => setWeatherInfo([].concat(result)))
+  }, [])
+  if (weatherInfo.length > 0) {
+    tempInfo = (Number(weatherInfo[0].main.temp)-273.15).toFixed(2)
+    console.log("weather info:",weatherInfo)
+    console.log("temp:",tempInfo)
+    temp_icon = weatherInfo[0].weather[0].icon
+    console.log("weather Icon:", temp_icon)
+    temp_wind = weatherInfo[0].wind.speed
+  }
   return (
     <>
       <h1>{message.name.common}</h1>
@@ -13,7 +33,11 @@ const ShowCountry = ({message}) => {
       </ul>
       <p>
         <img src={message.flags.png} width="220" height="150" />
-      </p>   
+      </p>
+      <h2>Weather in {message.capital}</h2>
+      <p>temperature {tempInfo} Celcius</p>
+      <img src={`https://openweathermap.org/img/wn/${temp_icon}@2x.png`} />
+      <p>wind {temp_wind} m/s</p>
     </>
   )
 }
@@ -56,6 +80,7 @@ const App = () => {
   console.log("filterName:",filterName)
   console.log("CountriesList len:",countriesList.length)
   //console.log("CountriesList Names:",countriesList.map(x => x.name.common))
+  
 
   const countryToShow = (filterName === "")
     ? countriesList
