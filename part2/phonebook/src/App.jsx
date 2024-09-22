@@ -67,8 +67,17 @@ const App = () => {
           setPersons(persons.concat(response))
           setNewName('')
           setNewNumber('')
+          successMessage(nameObject.name)
         })
-      successMessage(nameObject.name)
+        .catch(error => {
+          console.log(error.response.data.error)
+          setErrorMsg(
+            error.response.data.error
+          )
+          setTimeout(() => {
+            setErrorMsg(null)
+          }, 5000)
+        })
     }   
   }
 
@@ -78,7 +87,9 @@ const App = () => {
       namePersons
         .remove(Id)
         .then(reply => {
-          setPersons(persons.filter(x => x.id !== reply.id))
+          
+          setPersons(persons.filter(x => x.id !== Id))
+          console.log("will remove (reply):",persons.filter(x => x.id !== Id))
         })
     } else {
     }
