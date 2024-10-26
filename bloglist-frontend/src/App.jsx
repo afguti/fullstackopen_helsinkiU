@@ -11,13 +11,20 @@ const App = () => {
   const [count, setCount] = useState(0)
 
   useEffect(() => {
-    setCount(count + 1)
-    console.log("USE EFFECT cout:", count)
-    
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
+  }, [])
 
+  useEffect(() => {
+    setCount(count + 1)
+    console.log("USE EFFECT count:", count)
+    if (user) {
+      blogService.getAll().then(blogs => setBlogs( blogs ))
+    }
   }, [user])
 
   const handleLogin = async (event) => {
@@ -28,6 +35,9 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       })
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
+      )
       blogService.setToken(user.token)
       console.log("USER-TOKEN:", user.token)
       setUser(user)
@@ -40,6 +50,12 @@ const App = () => {
       //}, 5000)
       alert('Wrong credentials')
     }
+  }
+  
+  const handleClick = () => {
+    window.localStorage.removeItem('loggedBlogappUser')
+    console.log("You clicked logout!")
+    setUser(null)
   }
 
   const loginForm = () => (
@@ -69,16 +85,22 @@ const App = () => {
     </div>
   )
 
+  const buttonAction = () => (
+      <button onClick={handleClick}>
+        logout
+      </button>
+  )
+
   const blogForm = () => (
     <div>
       <h2>blogs</h2>
-      <p>{user.username} logged in</p>
+      <p>{user.username} logged in { buttonAction() }</p>
+      
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
-      )}
+      )}     
     </div>
   )
-
 
   return (
     <>
