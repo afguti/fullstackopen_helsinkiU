@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
+import ErrorMsg from './components/ErrorMsg'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [successMsg, setSuccessMsg] = useState(null)
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
   const [title, setTitle] = useState('')
@@ -47,11 +51,10 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      //setErrorMessage('Wrong credentials') //setErrorMessage is not defined here!!
-      //setTimeout(() => {
-      //  setErrorMessage(null)
-      //}, 5000)
-      alert('Wrong credentials')
+      setErrorMessage('wrong username or password') 
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
   }
   
@@ -78,6 +81,10 @@ const App = () => {
         setTitle('')
         setAuthor('')
         setUrl('')
+        setSuccessMsg(`a new blog ${response.title} by ${response.author} added`)
+        setTimeout(() => {
+          setSuccessMsg(null)
+        }, 5000)
       })
   }
 
@@ -163,6 +170,8 @@ const App = () => {
 
   return (
     <>
+    <Notification message={successMsg} />
+    <ErrorMsg message={errorMessage} />
       {user === null
         ? loginForm()
         : blogForm()
