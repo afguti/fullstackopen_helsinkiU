@@ -4,6 +4,8 @@ import Notification from './components/Notification'
 import ErrorMsg from './components/ErrorMsg'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Togglable from './components/Togglable'
+import LoginForm from './components/LoginForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -65,7 +67,6 @@ const App = () => {
   }
 
   const createBlog = () => {
-    event.preventDefault()
     console.log('Crated blog with', title, author, url)
 
     const newBlog = {
@@ -87,33 +88,6 @@ const App = () => {
         }, 5000)
       })
   }
-
-  const loginForm = () => (
-    <div>
-      <h2>Log in to application</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-            <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-            />
-        </div>
-        <div>
-          password
-            <input
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-            />
-        </div>
-        <button type="submit">login</button>
-      </form>    
-    </div>
-  )
 
   const buttonAction = () => (
       <button onClick={handleClick}>
@@ -159,9 +133,12 @@ const App = () => {
 
   const blogForm = () => (
     <div>
+      
       <h2>blogs</h2>
       <p>{user.username} logged in { buttonAction() }</p>
-      { createForm() }
+        <Togglable buttonLabel='new note'>
+          { createForm() }
+        </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}     
@@ -173,7 +150,13 @@ const App = () => {
     <Notification message={successMsg} />
     <ErrorMsg message={errorMessage} />
       {user === null
-        ? loginForm()
+        ? <LoginForm 
+            handleLogin={handleLogin}
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+        />
         : blogForm()
       }
     </>
